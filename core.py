@@ -95,6 +95,12 @@ def get_html_from_filepath(filepath, start=0, end=None):
         for i in soup.findAll('div', {'class': 'input'}):
             if i.findChildren()[1].find(text='#ignore') is not None:
                 i.extract()
+
+        # DW Hack - the above leaves empty divs that still take up space.
+        for i in soup.findAll('div', {'class': 'code_cell'}):
+            if not i.contents or set(i.contents) == {u'\n'}:
+                i.decompose()
+
         content = soup.decode(formatter=None)
 
     return content, info
